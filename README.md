@@ -23,3 +23,11 @@ read](https://github.com/BigNerd95/RouterOS-Backup-Tools/issues).
 
 It also does not restore well unless it's exactly the same model of hardware it
 was created from.
+
+# Importing
+
+<img src="https://s.natalian.org/2021-06-08/no-defaults.png">
+
+Winbox to your new router, setup your admin user / ssh key
+
+	/system reset-configuration keep-users=yes no-defaults=yes
