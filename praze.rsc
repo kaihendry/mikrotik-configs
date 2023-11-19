@@ -1,141 +1,173 @@
-# 2023-09-30 12:02:13 by RouterOS 7.11.2
-# software id = D555-50G3
+# 2023-11-19 13:15:29 by RouterOS 7.12
+# software id = KQWQ-JVBP
 #
-# model = RBD53iG-5HacD2HnD
-# serial number = E7290D45E8BC
+# model = L009UiGS-2HaxD
+# serial number = HF309260XJZ
 /interface bridge
-add name=aa
-/interface ethernet
-set [ find default-name=ether1 ] l2mtu=1526 mtu=1520 name=ether1-wan
-/interface wireless
-# managed by CAPsMAN
-# channel: 2432/20-Ce/gn(20dBm), SSID: praze, CAPsMAN forwarding
-set [ find default-name=wlan1 ] antenna-gain=0 country=no_country_set \
-    frequency-mode=manual-txpower ssid=MikroTik station-roaming=enabled
-# managed by CAPsMAN
-# channel: 5825/20-eeeC/ac/DP(20dBm), SSID: praze, CAPsMAN forwarding
-set [ find default-name=wlan2 ] antenna-gain=0 country=no_country_set \
-    frequency-mode=manual-txpower ssid=MikroTik station-roaming=enabled
+add admin-mac=78:9A:18:67:EC:5C auto-mac=no comment=defconf name=bridge
 /interface pppoe-client
-add add-default-route=yes disabled=no interface=ether1-wan name=AAISP user=\
-    khw@a.1
-/caps-man datapath
-add bridge=aa client-to-client-forwarding=yes local-forwarding=no name=aaout
-/caps-man configuration
-add country="united kingdom" datapath=aaout name=Praze ssid=praze
-/interface lte apn
-set [ find default=yes ] ip-type=ipv4 use-network-apn=no
-/interface wireless security-profiles
-set [ find default=yes ] supplicant-identity=MikroTik
+add add-default-route=yes disabled=no interface=ether1 name=pppoe-out1 \
+    service-name=AAISP use-peer-dns=yes user=khw@a.1
+/interface list
+add comment=defconf name=WAN
+add comment=defconf name=LAN
+/interface wifiwave2 datapath
+add bridge=bridge disabled=no name=datapath1
+/interface wifiwave2 configuration
+add datapath=datapath1 disabled=no name=cfg1 ssid=praze
 /ip pool
-add name=dhcp_pool0 ranges=81.187.180.130-81.187.180.190
+add name=dhcp ranges=81.187.180.130-81.187.180.190
 /ip dhcp-server
-add address-pool=dhcp_pool0 interface=aa lease-time=10m name=dhcp1
-/queue type
-add kind=pcq name=wan pcq-classifier=src-address
-/routing bgp template
-set default disabled=no output.network=bgp-networks
-/routing ospf instance
-add disabled=no name=default-v2
-/routing ospf area
-add disabled=yes instance=default-v2 name=backbone-v2
-/snmp community
-set [ find default=yes ] addresses=0.0.0.0/0
-/caps-man manager
-set enabled=yes upgrade-policy=suggest-same-version
-/caps-man provisioning
-add action=create-dynamic-enabled master-configuration=Praze name-format=\
-    prefix-identity name-prefix=P
+add address-pool=dhcp interface=bridge lease-time=10m name=defconf
+/port
+set 0 name=serial0
 /interface bridge port
-add bridge=aa hw=no ingress-filtering=no interface=ether2
-add bridge=aa hw=no ingress-filtering=no interface=ether3
-add bridge=aa hw=no ingress-filtering=no interface=ether4
-add bridge=aa hw=no ingress-filtering=no interface=ether5
+add bridge=bridge comment=defconf interface=ether2
+add bridge=bridge comment=defconf interface=ether3
+add bridge=bridge comment=defconf interface=ether4
+add bridge=bridge comment=defconf interface=ether5
+add bridge=bridge comment=defconf interface=ether6
+add bridge=bridge comment=defconf interface=ether7
+add bridge=bridge comment=defconf interface=ether8
+add bridge=bridge comment=defconf interface=sfp1
+add bridge=bridge comment=defconf interface=*1
 /ip neighbor discovery-settings
-set discover-interface-list=!dynamic
-/ipv6 settings
-set disable-ipv6=yes max-neighbor-entries=8192
-/interface ovpn-server server
-set auth=sha1,md5
-/interface wireless cap
-# 
-set caps-man-addresses=127.0.0.1 discovery-interfaces=aa enabled=yes \
-    interfaces=wlan1,wlan2
+set discover-interface-list=LAN
+/interface list member
+add comment=defconf interface=bridge list=LAN
+add comment=defconf interface=ether1 list=WAN
+add interface=pppoe-out1 list=WAN
+/interface wifiwave2 cap
+set caps-man-addresses=127.0.0.1 discovery-interfaces=bridge enabled=yes
+/interface wifiwave2 capsman
+set ca-certificate=auto enabled=yes interfaces=bridge package-path="" \
+    require-peer-certificate=no upgrade-policy=none
+/interface wifiwave2 provisioning
+add action=create-dynamic-enabled disabled=no master-configuration=cfg1
 /ip address
-add address=81.187.180.129/26 interface=ether2 network=81.187.180.128
+add address=81.187.180.129/24 comment=defconf interface=bridge network=\
+    81.187.180.0
+/ip cloud
+set ddns-enabled=yes
+/ip dhcp-client
+add comment=defconf disabled=yes interface=ether1
 /ip dhcp-server lease
-add address=81.187.180.135 client-id=1:9c:8e:cd:1d:bd:e6 mac-address=\
-    9C:8E:CD:1D:BD:E6 server=dhcp1
-add address=81.187.180.131 mac-address=7C:2F:80:49:90:DA server=dhcp1
-add address=81.187.180.157 mac-address=84:EA:ED:79:F7:96 server=dhcp1
-add address=81.187.180.149 client-id=\
-    ff:6a:2:54:8d:0:2:0:0:ab:11:e2:e1:6e:aa:18:84:ac:41 mac-address=\
-    B8:27:EB:E9:0F:F2 server=dhcp1
-add address=81.187.180.176 client-id=ute mac-address=1C:91:80:D3:43:85 \
-    server=dhcp1
+add address=81.187.180.169 client-id=\
+    ff:9d:97:75:5:0:2:0:0:ab:11:97:b8:41:4a:c8:9a:78:f9 mac-address=\
+    DC:A6:32:0E:A7:25 server=defconf
+add address=81.187.180.163 client-id=1:b0:4f:13:1c:87:a0 mac-address=\
+    B0:4F:13:1C:87:A0 server=defconf
+add address=81.187.180.153 client-id=1:dc:a6:32:e:a7:25 mac-address=\
+    DC:A6:32:0E:A7:25 server=defconf
 /ip dhcp-server network
-add address=81.187.180.128/26 dns-server=217.169.20.20,217.169.20.21 gateway=\
-    81.187.180.129 netmask=26
+add address=81.187.180.0/24 comment=defconf dns-server=81.187.180.129 \
+    gateway=81.187.180.129 netmask=24
 /ip dns
-set allow-remote-requests=yes servers=217.169.20.20,217.169.20.21
-/ip firewall address-list
-add address=888.dabase.com list=admin
-add address=pj.dabase.com list=admin
-add address=194.223.130.114 list=admin
+set allow-remote-requests=yes
+/ip dns static
+add address=81.187.180.129 comment=defconf name=router.lan
 /ip firewall filter
-add action=accept chain=forward comment="Established and related traffic" \
-    connection-state=established,related
-add action=accept chain=forward comment="LAN traffic can go anywhere" \
-    in-interface=aa
-add action=accept chain=forward comment=ICMP protocol=icmp
-add action=accept chain=forward comment=management dst-port=22,80 protocol=\
-    tcp src-address-list=admin
-add action=accept chain=forward dst-port=51820 protocol=udp src-address-list=\
-    admin
-add action=drop chain=forward comment="Drop the rest"
-add action=accept chain=output
-add action=accept chain=input comment="LAN traffic can go anywhere" \
-    in-interface=aa
-add action=accept chain=input comment="Established traffic" connection-state=\
-    established
-add action=accept chain=input comment="Related traffic" connection-state=\
-    related
-add action=accept chain=input dst-port=22,80 protocol=tcp src-address-list=\
-    admin
-add action=accept chain=input dst-port=51820 protocol=udp src-address-list=\
-    admin
-add action=accept chain=input comment=ICMP protocol=icmp
-add action=accept chain=input comment="CAPs to CAPsMAN" dst-port=5246,5247 \
-    protocol=udp src-address=127.0.0.1
-add action=drop chain=input comment="Drop the rest"
-/ip firewall service-port
-set ftp disabled=yes
-set tftp disabled=yes
-set h323 disabled=yes
-set sip disabled=yes
-set pptp disabled=yes
-/ip ssh
-set allow-none-crypto=yes forwarding-enabled=remote
-/routing bfd configuration
-add disabled=no
+add action=accept chain=input comment=\
+    "defconf: accept established,related,untracked" connection-state=\
+    established,related,untracked
+add action=drop chain=input comment="defconf: drop invalid" connection-state=\
+    invalid
+add action=accept chain=input comment="defconf: accept ICMP" protocol=icmp
+add action=accept chain=input comment=\
+    "defconf: accept to local loopback (for CAPsMAN)" dst-address=127.0.0.1
+add action=drop chain=input comment="defconf: drop all not coming from LAN" \
+    in-interface-list=!LAN
+add action=accept chain=forward comment="defconf: accept in ipsec policy" \
+    ipsec-policy=in,ipsec
+add action=accept chain=forward comment="defconf: accept out ipsec policy" \
+    ipsec-policy=out,ipsec
+add action=fasttrack-connection chain=forward comment="defconf: fasttrack" \
+    connection-state=established,related hw-offload=yes
+add action=accept chain=forward comment=\
+    "defconf: accept established,related, untracked" connection-state=\
+    established,related,untracked
+add action=drop chain=forward comment="defconf: drop invalid" \
+    connection-state=invalid
+add action=drop chain=forward comment=\
+    "defconf: drop all from WAN not DSTNATed" connection-nat-state=!dstnat \
+    connection-state=new in-interface-list=WAN
+/ip firewall nat
+add action=masquerade chain=srcnat comment="defconf: masquerade" disabled=yes \
+    ipsec-policy=out,none out-interface-list=WAN
+/ipv6 firewall address-list
+add address=::/128 comment="defconf: unspecified address" list=bad_ipv6
+add address=::1/128 comment="defconf: lo" list=bad_ipv6
+add address=fec0::/10 comment="defconf: site-local" list=bad_ipv6
+add address=::ffff:0.0.0.0/96 comment="defconf: ipv4-mapped" list=bad_ipv6
+add address=::/96 comment="defconf: ipv4 compat" list=bad_ipv6
+add address=100::/64 comment="defconf: discard only " list=bad_ipv6
+add address=2001:db8::/32 comment="defconf: documentation" list=bad_ipv6
+add address=2001:10::/28 comment="defconf: ORCHID" list=bad_ipv6
+add address=3ffe::/16 comment="defconf: 6bone" list=bad_ipv6
+/ipv6 firewall filter
+add action=accept chain=input comment=\
+    "defconf: accept established,related,untracked" connection-state=\
+    established,related,untracked
+add action=drop chain=input comment="defconf: drop invalid" connection-state=\
+    invalid
+add action=accept chain=input comment="defconf: accept ICMPv6" protocol=\
+    icmpv6
+add action=accept chain=input comment="defconf: accept UDP traceroute" port=\
+    33434-33534 protocol=udp
+add action=accept chain=input comment=\
+    "defconf: accept DHCPv6-Client prefix delegation." dst-port=546 protocol=\
+    udp src-address=fe80::/10
+add action=accept chain=input comment="defconf: accept IKE" dst-port=500,4500 \
+    protocol=udp
+add action=accept chain=input comment="defconf: accept ipsec AH" protocol=\
+    ipsec-ah
+add action=accept chain=input comment="defconf: accept ipsec ESP" protocol=\
+    ipsec-esp
+add action=accept chain=input comment=\
+    "defconf: accept all that matches ipsec policy" ipsec-policy=in,ipsec
+add action=drop chain=input comment=\
+    "defconf: drop everything else not coming from LAN" in-interface-list=\
+    !LAN
+add action=accept chain=forward comment=\
+    "defconf: accept established,related,untracked" connection-state=\
+    established,related,untracked
+add action=drop chain=forward comment="defconf: drop invalid" \
+    connection-state=invalid
+add action=drop chain=forward comment=\
+    "defconf: drop packets with bad src ipv6" src-address-list=bad_ipv6
+add action=drop chain=forward comment=\
+    "defconf: drop packets with bad dst ipv6" dst-address-list=bad_ipv6
+add action=drop chain=forward comment="defconf: rfc4890 drop hop-limit=1" \
+    hop-limit=equal:1 protocol=icmpv6
+add action=accept chain=forward comment="defconf: accept ICMPv6" protocol=\
+    icmpv6
+add action=accept chain=forward comment="defconf: accept HIP" protocol=139
+add action=accept chain=forward comment="defconf: accept IKE" dst-port=\
+    500,4500 protocol=udp
+add action=accept chain=forward comment="defconf: accept ipsec AH" protocol=\
+    ipsec-ah
+add action=accept chain=forward comment="defconf: accept ipsec ESP" protocol=\
+    ipsec-esp
+add action=accept chain=forward comment=\
+    "defconf: accept all that matches ipsec policy" ipsec-policy=in,ipsec
+add action=drop chain=forward comment=\
+    "defconf: drop everything else not coming from LAN" in-interface-list=\
+    !LAN
 /system clock
 set time-zone-name=Europe/London
 /system identity
-set name=momsbedroom
+set name=red
 /system leds
 set 0 disabled=yes
 set 1 disabled=yes
-set 2 disabled=yes
-set 3 disabled=yes
-set 4 disabled=yes
-set 5 disabled=yes
 /system leds settings
 set all-leds-off=immediate
 /system note
 set show-at-login=no
 /system routerboard settings
 # Firmware upgraded successfully, please reboot for changes to take effect!
-# Warning: cpu not running at default frequency
-set auto-upgrade=yes cpu-frequency=716MHz
-/tool graphing interface
-add interface=AAISP
+set auto-upgrade=yes enter-setup-on=delete-key
+/tool mac-server
+set allowed-interface-list=LAN
+/tool mac-server mac-winbox
+set allowed-interface-list=LAN
