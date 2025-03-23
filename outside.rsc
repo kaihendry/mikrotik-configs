@@ -1,4 +1,4 @@
-# 2025-03-23 16:04:06 by RouterOS 7.18.2
+# 2025-03-23 17:34:22 by RouterOS 7.18.2
 # software id = 5FN3-HYNE
 #
 # model = RBwAPG-5HacD2HnD
@@ -6,8 +6,8 @@
 /interface bridge
 add name=bridge
 /interface wireless
-set [ find default-name=wlan1 ] disabled=no mode=ap-bridge ssid=praze
-set [ find default-name=wlan2 ] disabled=no mode=ap-bridge ssid=praze
+set [ find default-name=wlan1 ] country="united kingdom" disabled=no installation=outdoor mode=ap-bridge ssid=praze
+set [ find default-name=wlan2 ] country="united kingdom" disabled=no frequency=5260 installation=outdoor mode=ap-bridge ssid=praze
 /interface wireless security-profiles
 set [ find default=yes ] supplicant-identity=MikroTik
 /interface bridge port
