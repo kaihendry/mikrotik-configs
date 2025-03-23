@@ -1,4 +1,3 @@
-I generally use these as a backup reference and when setting up new devices I
-use the Mikrotik wizard. How else are you going to get hw-offload=yes right?
+I've moved to Ubiquiti Gateway Max for my sanity.
 
-A warning about wifi6: https://dabase.com/blog/2023/mikrotik-wifi6/
+My Mikrotiks are now in dumb AP mode.
