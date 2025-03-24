@@ -1,4 +1,4 @@
-# 2025-03-23 17:25:23 by RouterOS 7.18.2
+# 2025-03-24 14:13:48 by RouterOS 7.18.2
 # software id = D555-50G3
 #
 # model = RBD53iG-5HacD2HnD
@@ -6,8 +6,8 @@
 /interface bridge
 add name=bridge
 /interface wifi
-set [ find default-name=wifi1 ] configuration.country="United Kingdom" .distance=0 .mode=ap .ssid=praze disabled=no security.authentication-types=owe
-set [ find default-name=wifi2 ] configuration.country="United Kingdom" .mode=ap .ssid=praze disabled=no security.authentication-types=owe
+set [ find default-name=wifi1 ] configuration.country="United Kingdom" .mode=ap .ssid=praze disabled=no security.authentication-types=""
+set [ find default-name=wifi2 ] configuration.country="United Kingdom" .mode=ap .ssid=praze disabled=no security.authentication-types=""
 /interface bridge port
 add bridge=bridge interface=ether1
 add bridge=bridge interface=ether2
